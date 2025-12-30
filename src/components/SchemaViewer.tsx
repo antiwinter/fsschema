@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { bitable, type ITableMeta, type IFieldMeta, type IRecord } from '@lark-base-open/js-sdk';
 import { Tree, Typography, Spin, Alert, Button, message, Tooltip } from 'antd';
 import { 
-  FolderOpenOutlined, 
-  FolderOutlined, 
   ExportOutlined 
 } from '@ant-design/icons';
 import { mapLarkTypeToSQL, getFieldIcon } from '../utils/larkTypes';
@@ -160,26 +158,18 @@ const SchemaViewer: React.FC = () => {
     let tableId = isTable ? key : info.node.tableId;
 
     if (tableId) {
-      // Construct URL
-      // Pattern: https://intchains.feishu.cn/wiki/...?table={tableId}
-      // Since we are inside the app, opening a new tab to the same base with query param might work
-      // or we try to find the current base URL.
-      // Fallback: use a generic Lark Base URL structure if specific wiki URL is unknown, 
-      // but user gave a specific wiki link. We will try to use relative path if possible or absolute.
-      
-      // Attempt to get current URL context if possible, otherwise use the hardcoded base for this user 
-      // or a generic one. User asked to "direct to that table".
-      
-      const baseUrl = 'https://intchains.feishu.cn/wiki/MNOkwgTt1i1aX7kmvTNc0161nUI';
-      const targetUrl = `${baseUrl}?table=${tableId}`;
-      window.open(targetUrl, '_blank');
+      // Use SDK to switch table within the application
+      bitable.ui.switchToTable(tableId).catch(err => {
+        console.error('Failed to switch table:', err);
+        message.error('Failed to navigate to table');
+      });
     }
   };
 
   const treeData: DataNode[] = Array.from(tablesData.values()).map(({ meta, fields }) => ({
     title: <Text strong>{meta.name}</Text>,
     key: meta.id,
-    icon: (props: any) => props.expanded ? <FolderOpenOutlined /> : <FolderOutlined />,
+    icon: null,
     children: fields.map(field => ({
       title: (
         <span>
