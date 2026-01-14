@@ -2,6 +2,8 @@
 
 A lightweight Lark Base extension to view the database schema of the current Base.
 
+**Live Demo**: https://antiwinter.github.io/fsschema/
+
 ## Features
 
 -   **Auto-Discovery**: Automatically fetches all tables in the Base.
